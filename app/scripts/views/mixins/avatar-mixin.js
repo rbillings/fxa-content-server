@@ -71,8 +71,9 @@ define(function (require, exports, module) {
           // default image if displayed
           return new ProfileImage();
         })
-        .fin(() => {
-          return this._completeLoadingSpinner(spinnerEl);
+        .then((profileImage) => {
+          return this._completeLoadingSpinner(spinnerEl)
+            .then(() => profileImage);
         })
         .then((profileImage) => {
           avatarWrapperEl.find(':not(.avatar-spinner)').remove();
@@ -119,7 +120,7 @@ define(function (require, exports, module) {
     // then removes the spinner element.
     _completeLoadingSpinner (spinnerEl) {
       if (_.isUndefined(spinnerEl)) {
-        return p();
+        return Promise.resolve();
       }
 
       var deferred = p.defer();
@@ -163,7 +164,7 @@ define(function (require, exports, module) {
     },
 
     deleteDisplayedAccountProfileImage (account) {
-      return p()
+      return Promise.resolve()
         .then(() => {
           if (! account.get('profileImageId')) {
             return account.fetchCurrentProfileImage()

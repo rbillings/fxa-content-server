@@ -13,7 +13,7 @@ define(function (require, exports, module) {
   const CropperImage = require('../../models/cropper-image');
   const FormView = require('../form');
   const ModalSettingsPanelMixin = require('../mixins/modal-settings-panel-mixin');
-  const p = require('p-promise');
+  const p = require('../../lib/promise');
   const ProfileImage = require('../../models/profile-image');
   const Template = require('stache!templates/settings/avatar_crop');
 

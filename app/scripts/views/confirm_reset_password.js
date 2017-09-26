@@ -68,7 +68,7 @@ define(function (require, exports, module) {
 
               return this._finishPasswordResetDifferentBrowser();
             })
-            .fail(this.displayError.bind(this));
+            .catch(this.displayError.bind(this));
         });
     },
 
@@ -151,7 +151,7 @@ define(function (require, exports, module) {
       account.set(_.pick(sessionInfo, Account.ALLOWED_KEYS));
 
       if (account.isDefault()) {
-        return p.reject(AuthErrors.toError('UNEXPECTED_ERROR'));
+        return Promise.reject(AuthErrors.toError('UNEXPECTED_ERROR'));
       }
 
       // The OAuth flow needs the sessionToken to finish the flow.
@@ -243,7 +243,7 @@ define(function (require, exports, module) {
         this.model.get('email'),
         this.model.get('passwordForgotToken')
       )
-      .fail((err) => {
+      .catch((err) => {
         if (AuthErrors.is(err, 'INVALID_TOKEN')) {
           return this.navigate('reset_password', {
             error: err

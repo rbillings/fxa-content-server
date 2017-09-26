@@ -125,7 +125,7 @@ define(function (require, exports, module) {
      *        Promise will resolve whenever message is sent.
      */
     send (command, data) {
-      return p().then(() => {
+      return Promise.resolve().then(() => {
         return this._sender.send(command, data, null);
       });
     },
@@ -150,11 +150,11 @@ define(function (require, exports, module) {
       // save the data beforehand in case the response is synchronous.
       this._outstandingRequests.add(messageId, outstanding);
 
-      return p().then(() => {
+      return Promise.resolve().then(() => {
         return this._sender.send(command, data, messageId);
       })
       .then(() => outstanding.deferred.promise)
-      .fail((err) => {
+      .catch((err) => {
         // The request is no longer considered outstanding if
         // there was a problem sending.
         this._outstandingRequests.remove(messageId);

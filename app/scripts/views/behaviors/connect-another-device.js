@@ -28,7 +28,7 @@ define((require, exports, module) => {
    */
   module.exports = function (defaultBehavior) {
     const behavior = function (view, account) {
-      return p().then(() => {
+      return Promise.resolve().then(() => {
         behavior.ensureConnectAnotherDeviceMixin(view);
 
         if (view.isEligibleForConnectAnotherDevice(account)) {

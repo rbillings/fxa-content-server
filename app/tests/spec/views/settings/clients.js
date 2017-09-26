@@ -84,7 +84,7 @@ define(function (require, exports, module) {
       });
 
       sinon.stub(account, 'isSignedIn').callsFake(() => {
-        return p(true);
+        return Promise.resolve(true);
       });
 
       attachedClients = new AttachedClients([
@@ -310,7 +310,7 @@ define(function (require, exports, module) {
         return initView()
           .then(() => {
             sinon.spy($.prototype, 'trigger');
-            sinon.stub(view, '_fetchAttachedClients').callsFake(() => p());
+            sinon.stub(view, '_fetchAttachedClients').callsFake(() => Promise.resolve());
             view.$('.clients-refresh').data('minProgressIndicatorMs', 0);
             return view.openPanel();
           });
@@ -357,7 +357,7 @@ define(function (require, exports, module) {
 
       it('calls `validateAndSubmit` on `clients-refresh` click, starts the refresh', () => {
         sinon.spy(view, 'startRefresh');
-        sinon.stub(view, 'validateAndSubmit').callsFake(() => p());
+        sinon.stub(view, 'validateAndSubmit').callsFake(() => Promise.resolve());
 
         view.$('.clients-refresh').click();
 
@@ -376,8 +376,8 @@ define(function (require, exports, module) {
 
       it('calls `_fetchAttachedClients`, refreshes', () => {
         sinon.stub(view, 'isPanelOpen').callsFake(() => true);
-        sinon.stub(view, '_fetchAttachedClients').callsFake(() => p());
-        sinon.stub(view, 'render').callsFake(() => p());
+        sinon.stub(view, '_fetchAttachedClients').callsFake(() => Promise.resolve());
+        sinon.stub(view, 'render').callsFake(() => Promise.resolve());
 
         return view.validateAndSubmit()
           .then(() => {
@@ -434,11 +434,11 @@ define(function (require, exports, module) {
     describe('_fetchAttachedClients', () => {
       beforeEach(() => {
         sinon.stub(user, 'fetchAccountSessions').callsFake(() => {
-          return p();
+          return Promise.resolve();
         });
 
         sinon.stub(user, 'fetchAccountOAuthApps').callsFake(() => {
-          return p();
+          return Promise.resolve();
         });
 
         return initView()
@@ -462,7 +462,7 @@ define(function (require, exports, module) {
               }
               sinon.stub(view._attachedClients, 'fetchClients').callsFake(() => {
                 view._attachedClients.length = numOfClients;
-                return p();
+                return Promise.resolve();
               });
 
               return view._fetchAttachedClients();

@@ -85,7 +85,6 @@ require.config({
     modal: '../bower_components/jquery-modal/jquery.modal',
     moment: '../bower_components/moment/moment',
     mustache: '../bower_components/mustache/mustache',
-    'p-promise': '../bower_components/p/p',
     raven: '../bower_components/raven-js/dist/raven',
     sinon: '../bower_components/sinon/index',
     speedTrap: '../bower_components/speed-trap/dist/speed-trap',

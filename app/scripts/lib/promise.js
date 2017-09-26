@@ -5,24 +5,46 @@
 define(function (require, exports, module) {
   'use strict';
 
-  const p = require('p-promise');
+  const p = (value) => Promise.resolve(value);
 
-  // The WebRTC polyfill tries to use native promises which are not available
-  // in Firefox until Fx 27, but WebRTC is available in Fx 17. Polyfill
-  // window.Promise using p.
-  if (! window.Promise) {
-    window.Promise = function (callback) {
-      var deferred = p.defer();
+  p.delay = (delayMS) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, delayMS);
+    });
+  };
 
-      try {
-        callback(deferred.resolve.bind(deferred), deferred.reject.bind(deferred));
-      } catch (e) {
-        deferred.reject(e);
-      }
-
-      return deferred.promise;
+  p.denodeify = function (callback) {
+    return function (...args) {
+      return new Promise((resolve, reject) => {
+        callback(...args, (err, response) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(response);
+          }
+        });
+      });
     };
+  };
+
+  class Deferred {
+    constructor () {
+      this.promise = new Promise((resolve, reject) => {
+        this._resolve = resolve;
+        this._reject = reject;
+      });
+
+      this.resolve = (value) => {
+        return this._resolve(value);
+      };
+
+      this.reject = (err) => {
+        return this._reject(err);
+      };
+    }
   }
+
+  p.defer = () => new Deferred();
 
   module.exports = p;
 });

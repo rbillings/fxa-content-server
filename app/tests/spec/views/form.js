@@ -253,7 +253,7 @@ define(function (require, exports, module) {
       it('beforeSubmit can return a promise for asynchronous operations', function () {
         view.formIsValid = true;
         view.beforeSubmit = function () {
-          return p().delay(10);
+          return p.delay(10);
         };
 
         return testFormSubmitted();
@@ -271,9 +271,10 @@ define(function (require, exports, module) {
       it('submit can return a promise for asynchronous operations', function () {
         view.formIsValid = true;
         view.submit = function () {
-          return p().then(function () {
+          return Promise.resolve().then(function () {
             view.isFormSubmitted = true;
-          }).delay(10);
+            return p.delay(10);
+          });
         };
 
         return testFormSubmitted();
@@ -605,7 +606,7 @@ define(function (require, exports, module) {
         };
 
         return view.validateAndSubmit()
-          .then(null, function () {
+          .catch(function () {
             assert.isTrue(view._isErrorVisible);
             assert.equal(view.$('.error').text(), 'BOOM');
           });
@@ -615,7 +616,7 @@ define(function (require, exports, module) {
         view.formIsValid = true;
 
         view.submit = function () {
-          return p()
+          return Promise.resolve()
             .then(function () {
               return view.displayError({ forceMessage: 'BOOM' });
             });

@@ -46,7 +46,7 @@ define(function (require, exports, module) {
       broker.DELAY_BROKER_RESPONSE_MS = 0;
 
       sinon.stub(broker, 'finishOAuthFlow').callsFake(() => {
-        return p();
+        return Promise.resolve();
       });
     });
 
@@ -138,11 +138,11 @@ define(function (require, exports, module) {
         broker.finishOAuthFlow.restore();
 
         sinon.stub(broker, 'getOAuthResult').callsFake(() => {
-          return p({});
+          return Promise.resolve({});
         });
 
         sinon.stub(broker, 'sendOAuthResultToRelier').callsFake(() => {
-          return p();
+          return Promise.resolve();
         });
 
         return broker.persistVerificationData(account)

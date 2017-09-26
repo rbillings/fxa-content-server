@@ -60,7 +60,7 @@ define(function (require, exports, module) {
    * @returns {Promise}
    */
   function requireOnDemand(resourceToGet, win = window) {
-    return p().then(function () {
+    return Promise.resolve().then(function () {
       const deferred = p.defer();
 
       // requirejs takes care of ensuring only one outstanding request

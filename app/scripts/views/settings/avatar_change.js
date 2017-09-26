@@ -122,7 +122,7 @@ define(function (require, exports, module) {
               });
               defer.resolve();
             })
-            .fail(imgOnError);
+            .catch(imgOnError);
         };
         reader.readAsDataURL(file);
       } else {

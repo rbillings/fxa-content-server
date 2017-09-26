@@ -34,7 +34,7 @@ define(function (require, exports, module) {
       describe('with a valid `sessionToken`', () => {
         beforeEach(() => {
           sinon.stub(account, 'sessionStatus').callsFake(() => {
-            return p({
+            return Promise.resolve({
               verified: account.sessionStatus.callCount === 3
             });
           });
@@ -56,7 +56,7 @@ define(function (require, exports, module) {
 
       describe('with an invalid `sessionToken`', () => {
         beforeEach(() => {
-          sinon.stub(account, 'sessionStatus').callsFake(() => p.reject(AuthErrors.toError('INVALID_TOKEN')));
+          sinon.stub(account, 'sessionStatus').callsFake(() => Promise.reject(AuthErrors.toError('INVALID_TOKEN')));
         });
 
         describe('model does not have a `uid`', () => {
@@ -67,7 +67,7 @@ define(function (require, exports, module) {
 
             const deferred = p.defer();
 
-            poll.on('verified', () => deferred.reject(assert.fail()));
+            poll.on('verified', () => deferred.reject(assert.catch()));
             poll.on('error', (_err) => {
               err = _err;
               deferred.resolve();
@@ -89,11 +89,11 @@ define(function (require, exports, module) {
           beforeEach(() => {
             account.set('uid', 'uid');
 
-            sinon.stub(account, 'checkUidExists').callsFake(() => p(true));
+            sinon.stub(account, 'checkUidExists').callsFake(() => Promise.resolve(true));
 
             const deferred = p.defer();
 
-            poll.on('verified', () => deferred.reject(assert.fail()));
+            poll.on('verified', () => deferred.reject(assert.catch()));
             poll.on('error', (_err) => {
               err = _err;
               deferred.resolve();
@@ -115,11 +115,11 @@ define(function (require, exports, module) {
           beforeEach(() => {
             account.set('uid', 'uid');
 
-            sinon.stub(account, 'checkUidExists').callsFake(() => p(false));
+            sinon.stub(account, 'checkUidExists').callsFake(() => Promise.resolve(false));
 
             const deferred = p.defer();
 
-            poll.on('verified', () => deferred.reject(assert.fail()));
+            poll.on('verified', () => deferred.reject(assert.catch()));
             poll.on('error', (_err) => {
               err = _err;
               deferred.resolve();

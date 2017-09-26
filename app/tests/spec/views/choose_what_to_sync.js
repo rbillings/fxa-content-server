@@ -221,7 +221,7 @@ define(function (require, exports, module) {
 
     describe('submit', () => {
       beforeEach(() => {
-        sinon.stub(user, 'setAccount').callsFake(() => p(account));
+        sinon.stub(user, 'setAccount').callsFake(() => Promise.resolve(account));
 
         return initView()
           .then(() => {

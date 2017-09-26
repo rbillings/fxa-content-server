@@ -134,7 +134,7 @@ define(function (require, exports, module) {
                 defer.reject(e);
               }
             })
-            .fail(function () {
+            .catch(function () {
               defer.reject(new Error('failed to feth .well-known/browserid'));
             });
 

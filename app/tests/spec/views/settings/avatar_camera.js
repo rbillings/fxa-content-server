@@ -81,7 +81,7 @@ define(function (require, exports, module) {
     describe('with session', function () {
       beforeEach(function () {
         sinon.stub(view, 'checkAuthorization').callsFake(function () {
-          return p(true);
+          return Promise.resolve(true);
         });
         sinon.stub(view, 'getSignedInAccount').callsFake(function () {
           return account;
@@ -217,7 +217,7 @@ define(function (require, exports, module) {
         });
 
         view.isUserAuthorized = function () {
-          return p(true);
+          return Promise.resolve(true);
         };
 
         sinon.stub(view, 'getSignedInAccount').callsFake(function () {
@@ -225,18 +225,18 @@ define(function (require, exports, module) {
         });
 
         sinon.stub(account, 'profileClient').callsFake(function () {
-          return p(profileClientMock);
+          return Promise.resolve(profileClientMock);
         });
 
         sinon.stub(profileClientMock, 'uploadAvatar').callsFake(function () {
-          return p({
+          return Promise.resolve({
             id: 'foo',
             url: 'test'
           });
         });
 
         sinon.stub(view, 'updateProfileImage').callsFake(function () {
-          return p();
+          return Promise.resolve();
         });
 
         sinon.stub(view, 'stopAndDestroyStream').callsFake(sinon.spy());
@@ -255,7 +255,7 @@ define(function (require, exports, module) {
               assert.ok(view.stream, 'stream is set');
 
               view.submit()
-                .done(function (result) {
+                .then(function (result) {
                   assert.isTrue(view.stopAndDestroyStream.called);
 
                   assert.equal(result.url, 'test');
@@ -277,18 +277,18 @@ define(function (require, exports, module) {
             });
 
           })
-          .fail(done);
+          .catch(done);
       });
 
       it('tracks new and change events for avatars', function (done) {
         profileClientMock = new ProfileMock();
 
         sinon.stub(account, 'profileClient').callsFake(function () {
-          return p(profileClientMock);
+          return Promise.resolve(profileClientMock);
         });
 
         sinon.stub(view, 'updateProfileImage').callsFake(function () {
-          return p();
+          return Promise.resolve();
         });
 
         function mockStream() {
@@ -310,7 +310,7 @@ define(function (require, exports, module) {
 
             return view.submit();
           })
-          .done(function () {
+          .then(function () {
             assert.isTrue(TestHelpers.isEventLogged(metrics, 'settings.avatar.camera.submit.change'));
             done();
           }, done);
@@ -361,7 +361,7 @@ define(function (require, exports, module) {
       describe('error', function () {
         beforeEach(function () {
           sinon.stub(windowMock.navigator.mediaDevices, 'getUserMedia').callsFake(function () {
-            return p.reject(AuthErrors.toError('NO_CAMERA'));
+            return Promise.reject(AuthErrors.toError('NO_CAMERA'));
           });
 
           sinon.spy(view, 'displayError');
