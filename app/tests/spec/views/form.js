@@ -565,18 +565,16 @@ define(function (require, exports, module) {
         view.formIsValid = true;
 
         view.submit = function () {
-          var defer = p.defer();
-
-          setTimeout(function () {
-            try {
-              assert.isTrue(view._isErrorVisible);
-              defer.resolve();
-            } catch (e) {
-              defer.reject(e);
-            }
-          }, 20);
-
-          return defer.promise;
+          return new Promise((resolve, reject) => {
+            setTimeout(function () {
+              try {
+                assert.isTrue(view._isErrorVisible);
+                resolve();
+              } catch (e) {
+                reject(e);
+              }
+            }, 20);
+          });
         };
 
         return view.validateAndSubmit()
@@ -591,18 +589,16 @@ define(function (require, exports, module) {
         view.formIsValid = true;
 
         view.submit = function () {
-          var defer = p.defer();
-
-          setTimeout(function () {
-            try {
-              assert.isTrue(view._isErrorVisible);
-              defer.reject('BOOM');
-            } catch (e) {
-              defer.reject(e);
-            }
-          }, 20);
-
-          return defer.promise;
+          return new Promise((resolve, reject) => {
+            setTimeout(function () {
+              try {
+                assert.isTrue(view._isErrorVisible);
+                reject('BOOM');
+              } catch (e) {
+                reject(e);
+              }
+            }, 20);
+          });
         };
 
         return view.validateAndSubmit()

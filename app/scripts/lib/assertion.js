@@ -33,7 +33,7 @@ define(function (require, exports, module) {
     // browser has native crypto, no need to fetch entropy from the server.
     try {
       if (window.crypto && window.crypto.getRandomValues) {
-        return P(true);
+        return Promise.resolve(true);
       }
     } catch (e) {
       // some browsers blow up when trying to query window.crypto.

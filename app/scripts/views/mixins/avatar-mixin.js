@@ -10,7 +10,6 @@ define(function (require, exports, module) {
   const _ = require('underscore');
   const AuthErrors = require('../../lib/auth-errors');
   const Notifier = require('../../lib/channels/notifier');
-  const p = require('../../lib/promise');
   const ProfileErrors = require('../../lib/profile-errors');
   const ProfileImage = require('../../models/profile-image');
   const UserAgentMixin = require('../../lib/user-agent-mixin');
@@ -123,29 +122,28 @@ define(function (require, exports, module) {
         return Promise.resolve();
       }
 
-      var deferred = p.defer();
-      spinnerEl
-        .addClass('completed')
-        .on('transitionend', function (event) {
-          // The first transitionend event will resolve the promise, but the spinner will have
-          // subsequent transitions, so we'll also hook on the transitionend event of the
-          // ::after pseudoelement, which "expands" to hide the spinner.
-          deferred.resolve();
+      return new Promise((resolve, reject) => {
+        spinnerEl
+          .addClass('completed')
+          .on('transitionend', function (event) {
+            // The first transitionend event will resolve the promise, but the spinner will have
+            // subsequent transitions, so we'll also hook on the transitionend event of the
+            // ::after pseudoelement, which "expands" to hide the spinner.
+            resolve();
 
-          if (event.originalEvent && event.originalEvent.pseudoElement === '::after') {
-            spinnerEl.remove();
-          }
-        });
+            if (event.originalEvent && event.originalEvent.pseudoElement === '::after') {
+              spinnerEl.remove();
+            }
+          });
 
-      // Always resolve and remove the spinner after MAX_SPINNER_COMPLETE_TIME,
-      // in case we don't receive the expected transitionend events, such as in
-      // the case of IE.
-      this.setTimeout(function transitionMaxTime () {
-        deferred.resolve();
-        spinnerEl.remove();
-      }, MAX_SPINNER_COMPLETE_TIME);
-
-      return deferred.promise;
+        // Always resolve and remove the spinner after MAX_SPINNER_COMPLETE_TIME,
+        // in case we don't receive the expected transitionend events, such as in
+        // the case of IE.
+        this.setTimeout(function transitionMaxTime () {
+          resolve();
+          spinnerEl.remove();
+        }, MAX_SPINNER_COMPLETE_TIME);
+      });
     },
 
     logAccountImageChange (account) {

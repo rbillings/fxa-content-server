@@ -7,7 +7,6 @@ define(function (require, exports, module) {
 
   const { assert } = require('chai');
   const Constants = require('lib/constants');
-  const p = require('lib/promise');
   const RedirectAuthenticationBroker = require('models/auth_brokers/oauth-redirect');
   const Relier = require('models/reliers/base');
   const Session = require('lib/session');
@@ -27,7 +26,7 @@ define(function (require, exports, module) {
 
     beforeEach(() => {
       metrics = {
-        flush: sinon.spy(p),
+        flush: sinon.spy(() => Promise.resolve()),
         logEvent: () => {}
       };
       relier = new Relier();

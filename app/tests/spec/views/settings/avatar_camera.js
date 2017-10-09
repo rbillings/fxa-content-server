@@ -12,7 +12,6 @@ define(function (require, exports, module) {
   const chai = require('chai');
   const Metrics = require('lib/metrics');
   const Notifier = require('lib/channels/notifier');
-  const p = require('lib/promise');
   const ProfileMock = require('../../../mocks/profile');
   const Relier = require('models/reliers/relier');
   const sinon = require('sinon');
@@ -125,14 +124,12 @@ define(function (require, exports, module) {
               var ev = document.createEvent('HTMLEvents');
               ev.initEvent('loadedmetadata', true, true);
 
-              var deferred = p.defer();
-
-              windowMock.on('stream', function () {
-                view.video.dispatchEvent(ev);
-                deferred.resolve();
+              return new Promise((resolve, reject) => {
+                windowMock.on('stream', function () {
+                  view.video.dispatchEvent(ev);
+                  resolve();
+                });
               });
-
-              return deferred.promise;
             });
 
             it('sets the stream', function () {

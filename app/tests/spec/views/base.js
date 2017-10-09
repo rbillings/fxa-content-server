@@ -16,7 +16,6 @@ define(function (require, exports, module) {
   const ErrorUtils = require('lib/error-utils');
   const Metrics = require('lib/metrics');
   const Notifier = require('lib/channels/notifier');
-  const p = require('lib/promise');
   const Relier = require('models/reliers/base');
   const sinon = require('sinon');
   const Template = require('stache!templates/test_template');
@@ -144,12 +143,10 @@ define(function (require, exports, module) {
       });
 
       it('triggers the `rendered` message when complete', function () {
-        var deferred = p.defer();
-
-        view.on('rendered', deferred.resolve.bind(deferred));
-        view.render();
-
-        return deferred.promise;
+        return new Promise((resolve, reject) => {
+          view.on('rendered', resolve);
+          view.render();
+        });
       });
 
       it('updates the page title with the embedded h1 and h2 tags', function () {

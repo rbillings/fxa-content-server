@@ -13,7 +13,6 @@ define(function (require, exports, module) {
   const BaseView = require('views/base');
   const Metrics = require('lib/metrics');
   const Notifier = require('lib/channels/notifier');
-  const p = require('lib/promise');
   const sinon = require('sinon');
   const TestHelpers = require('../../../lib/helpers');
   const Translator = require('lib/translator');
@@ -53,17 +52,13 @@ define(function (require, exports, module) {
 
     function setupReRenderTest(testAction) {
       return initView()
-        .then(() => {
-          var deferred = p.defer();
-
-          view.on('rendered', deferred.resolve.bind(deferred));
+        .then(() => new Promise((resolve, reject) => {
+          view.on('rendered', resolve);
 
           if (_.isFunction(testAction)) {
             testAction();
           }
-
-          return deferred.promise;
-        });
+        }));
     }
 
     beforeEach(() => {
