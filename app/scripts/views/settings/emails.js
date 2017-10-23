@@ -14,6 +14,7 @@ define(function (require, exports, module) {
   const FormView = require('../form');
   const preventDefaultThen = require('../base').preventDefaultThen;
   const SettingsPanelMixin = require('../mixins/settings-panel-mixin');
+  const UpgradeSessionMixin = require('../mixins/upgrade-session-mixin');
   const SearchParamMixin = require('../../lib/search-param-mixin');
   const Strings = require('../../lib/strings');
   const showProgressIndicator = require('../decorators/progress_indicator');
@@ -27,6 +28,7 @@ define(function (require, exports, module) {
 
   var View = FormView.extend({
     template: Template,
+    gatedTemplate: Template,
     className: 'emails',
     viewName: 'settings.emails',
 
@@ -37,7 +39,7 @@ define(function (require, exports, module) {
       'click .set-primary': preventDefaultThen('setPrimary')
     },
 
-    initialize (options) {
+    initialize (options = {}) {
       if (options.emails) {
         this._emails = options.emails;
       } else {
@@ -49,17 +51,16 @@ define(function (require, exports, module) {
       context.set({
         buttonClass: this._hasSecondaryEmail() ? 'secondary' : 'primary',
         canChangePrimaryEmail: this._canChangePrimaryEmail(),
+        caption: this.translate(t('A secondary email is an additional address for receiving security notices and confirming new Sync devices')),
+        email: this.getSignedInAccount().get('email'),
         emails: this._emails,
+        gatedHref: 'settings/emails',
         hasSecondaryEmail: this._hasSecondaryEmail(),
         hasSecondaryVerifiedEmail: this._hasSecondaryVerifiedEmail(),
         isPanelOpen: this.isPanelOpen(),
-        newEmail: this.newEmail
+        newEmail: this.newEmail,
+        title: this.translate(t('Secondary email'))
       });
-    },
-
-    beforeRender () {
-      // Only show this view on verified session
-      return this._isSecondaryEmailEnabled();
     },
 
     afterRender () {
@@ -75,25 +76,6 @@ define(function (require, exports, module) {
       }
 
       return false;
-    },
-
-    _isSecondaryEmailEnabled () {
-      // Only show secondary email panel if the user is in a verified session and feature is enabled.
-      const account = this.getSignedInAccount();
-
-      return account.recoveryEmailSecondaryEmailEnabled()
-        .then((isEnabled) => {
-          if (! isEnabled) {
-            return this.remove();
-          }
-
-          // If we fail to fetch emails, then this user does not have this feature enabled
-          // and we should not display this panel.
-          return this._fetchEmails()
-            .fail(() => {
-              return this.remove();
-            });
-        });
     },
 
     _hasSecondaryEmail () {
@@ -180,7 +162,8 @@ define(function (require, exports, module) {
     AvatarMixin,
     SettingsPanelMixin,
     FloatingPlaceholderMixin,
-    SearchParamMixin
+    SearchParamMixin,
+    UpgradeSessionMixin
   );
 
   module.exports = View;
